@@ -26,14 +26,13 @@ class startup
             'DEFAULT_VERIFICATION_CONTROLLER' => 'verification',
             'DEFAULT_VERIFICATION_ACTION' => 'requestAccessForm',
             'PROJECT_NAMESPACE' => null,
-            'CONTROLLER_NAMESPACE' => 'Controller\\'
+            'CONTROLLER_NAMESPACE' => 'Controller'
 
         );
         $settings = array_merge($stdSettings, $settings);
         $this->DefineEnvironmentVars($settings);
 
-        if(is_null(PROJECT_NAMESPACE) || substr(PROJECT_NAMESPACE, -1, 1) != '\\' ||
-            empty(ENV_DETAILS_PATH) || ENV_DETAILS_PATH == null) die();
+        if(is_null(PROJECT_NAMESPACE) || empty(ENV_DETAILS_PATH) || ENV_DETAILS_PATH == null) die();
 
         // Parse .env file for
         $this->putEnvVars(parse_ini_file(ENV_DETAILS_PATH));
