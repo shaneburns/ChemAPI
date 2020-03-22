@@ -1,5 +1,6 @@
 <?php
 namespace ChemAPI;
+use const PROJECT_NAMESPACE;
 use ChemAPI\startup;
 use ChemAPI\Result;
 use Tightenco\Overload\Overloadable;
