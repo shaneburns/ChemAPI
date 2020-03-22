@@ -1,0 +1,25 @@
+{
+    "name": "mcshane/chemapi",
+    "description": "A super lightweight framework for building configurable, rich, interactive, and pretty secure APIs to power your front-end services and apps!",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "mcshaneburns",
+            "email": "mcshaneburns@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "doctrine/dbal" : "*",
+        "doctrine/cache" : "*",
+        "monolog/monolog" : "*",
+        "thecodingmachine/tdbm" :  "^5.1",
+        "tightenco/overload" : "*"
+    },
+    "autoload": {
+        "psr-4": { 
+            "ChemAPI\\": "src"
+        }
+    }
+}
