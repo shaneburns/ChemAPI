@@ -108,7 +108,7 @@ class routingCatalyst{
     }
 
     function getControllerPath(){
-        return PROJECT_NAMESPACE . CONTROLLER_NAMESPACE . $this->controller."Controller";
+        return CONTROLLER_NAMESPACE . $this->controller."Controller";
     }
     function getController(){
         return $this->controller;
