@@ -1,5 +1,5 @@
 {
-    "name": "mcshane/chem-api",
+    "name": "eadrom/chem-api",
     "description": "A super lightweight framework for building configurable, rich, interactive, and pretty secure APIs to power your front-end services and apps!",
     "type": "library",
     "license": "MIT",
