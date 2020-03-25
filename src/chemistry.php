@@ -1,8 +1,10 @@
 <?php
 namespace ChemAPI;
 use const PROJECT_NAMESPACE;
-use ChemAPI\startup;
-use ChemAPI\Result;
+use Doctrine\DBAL;
+use Doctrine\Common;
+use Monolog\Logger;
+use TheCodingMachine\TDBM;
 use Tightenco\Overload\Overloadable;
 /**
 * Chemistry

@@ -1,9 +1,5 @@
 <?php
 namespace ChemAPI;
-use Doctrine\DBAL;
-use Doctrine\Common;
-use Monolog\Logger;
-use TheCodingMachine\TDBM;
 /**
  * Startup
  */
