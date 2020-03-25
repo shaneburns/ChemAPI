@@ -21,38 +21,39 @@ class controller{
     function __construct($chem = null, $invokeAction = true){
         if($chem == null) die();
         $this->chem = $chem;
-        if($invokeAction) $this->response = $this->invokeAction(); // If action exists the process dies here
-        // no action exists to handle the current request is this line is reached
-        // TODO: throw a 404 and log it
+        if($invokeAction) $this->response = $this->invokeAction();
+        return $this->response;
     }
 
     public function getResponse(){
         return $this->response;
     }
 
-    public function hasAction(){
-        return method_exists($this, $this->chem->catalyst->getAction());
+    public function hasAction(string $action){
+        return method_exists($this, $action);
     }
 
     public function invokeAction(){
         // Check if the action exists
-        if($this->hasAction()){
+        if($this->hasAction($this->chem->catalyst->getAction())){
             try {// invoke the action
-                if($this->chem->catalyst->hasParameters()) return $this->{$this->chem->catalyst->getAction()}(...array_values($this->chem->catalyst->parametersNeedMapping() ? $this->mapParameters() : $this->chem->catalyst->getParameters()));
+                if($this->chem->catalyst->hasParameters()) return $this->{$this->chem->catalyst->getAction()}(...array_values($this->chem->catalyst->parametersNeedMapping() ? $this->mapOverloadableParameters() : $this->chem->catalyst->getParameters()));
                 else return $this->{$this->chem->catalyst->getAction()}();
             } catch (\Exception $e) {
                 // TODO: Log this error stat dude...
-                //return new result($e, [], 404);
+                return new Result($e, 404, []);
             }
         }
         else {
             // 404 response
             // TODO: CREATE A FREAKING 404 RESPONSE BROOO
+            return new Result("The page specified was not found.", 404, []);
         }
     }
 
-    public function mapParameters()
+    public function mapOverloadableParameters()
     {
+        $origParams = $this->chem->catalyst->getParameters();
         $params = $this->chem->catalyst->getParameters();
         $paramCount = count($params);
         $actionCandidates = $this->{$this->chem->catalyst->getAction().'Actions'};
@@ -61,32 +62,38 @@ class controller{
             if(gettype($val) == 'object') $func = new ReflectionFunction($val);
             else if(gettype($val) == 'string') $func = new ReflectionMethod($this, $val);
             if($paramCount == $func->getNumberOfParameters()){ // check if the parameter counts match
-                $fParams = $func->getParameters();// Get a list of ParameterReflection classes
-                for($i = 0;  $i <= $paramCount - 1; $i++){// loop through that list
-                    if(gettype($params[$i]) == 'object' && gettype($fParams[$i]->getClass()) == gettype($params[$i])){// check basic class types
-                        if(!$fParams[$i]->getClass()->isInternal()){
-                            $instance = $fParams[$i]->getClass()->newInstance();
-                            if(!utils::compareObjectProperties($params[$i], $instance)){
-                                $valid = false;
-                                break; // somin ain't right here
-                            }
-                            try{
-                                $params[$i] = utils::classCast($params[$i], $instance);
-                            }catch(\Exception $e){
-                                // TODO: Bad Mapping -> log this error stat dude...
-                                echo $e;
-                            }
-                        }
-                    }else if(gettype($params[$i]) != $fParams[$i]->getType()){ 
-                        $valid = false;
-                        break; // check basic class types
-                    }
-                    $valid = true;
-                }
+                $fParams = $func->getParameters();// Get a list of ParameterReflection classes for the function parameters
+                $this->mapParameters($params, $fParams, $valid);
                 if($valid) break;
+                else $params = $origParams;
             }
         }
         return $params;
+    }
+
+    public function mapParameters(&$params, &$fParams, &$valid){
+        for($i = 0;  $i <= count($params) - 1; $i++){// loop through those params
+            if(gettype($params[$i]) == 'object' && gettype($fParams[$i]->getClass()) == gettype($params[$i])){// check types for objects
+                if(!$fParams[$i]->getClass()->isInternal()){// see if it's not an internal class
+                    $instance = $fParams[$i]->getClass()->newInstance(); // create a new instance
+                    if(!utils::compareObjectProperties($params[$i], $instance)){ // do a full compare
+                        $valid = false;
+                        break; // somin ain't right here
+                    }
+                    try{
+                        $params[$i] = utils::classCast($params[$i], $instance); // cast that ish
+                    }catch(\Exception $e){
+                        // TODO: Bad Mapping -> log this error stat dude...
+                        $valid = false;
+                        break;
+                    }
+                }
+            }else if(gettype($params[$i]) != $fParams[$i]->getType()){ // check basic type matching
+                $valid = false;
+                break; // check basic class types
+            }
+            $valid = true;
+        }
     }
 
     public function redirectToAction($actionName = '') : void
