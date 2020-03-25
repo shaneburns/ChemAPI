@@ -26,7 +26,7 @@ class startup
             'CONTROLLER_NAMESPACE' => 'Controller',
             'CORE_NAMESPACE' => null
         );
-        $this->settings = array_merge($stdSettings, $settings);
+        $this->settings = array_merge($this->stdSettings, $settings);
     }
 
 }
