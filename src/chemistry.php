@@ -123,10 +123,7 @@ class chemistry
         $this->overload($args, [
             function (Result $result)
             {
-                \http_response_code($result->status);
-                if(!empty($result->headers)) foreach($result->headers as $h ) header($h);
-                if($result->status > 399 && empty($result->body))  $result->body = ['request'=> 'failed', 'message'=> \http_response_code()];
-                echo \json_encode($result->body);
+                $resut->display();
             },
             function (){
                 return $this->printResult(new Result(['request'=> 'failed', 'message'=> 'Try again'], 400));

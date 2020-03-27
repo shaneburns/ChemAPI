@@ -50,8 +50,7 @@ class utils {
                 $final->$property = $value; 
         } 
         return $final;
-    } 
-
+    }
     public static function compareObjectProperties(object $suspect, object $expected) : ?bool
     {
         if(count((array)$suspect) != count((array)$expected) ) return false;
