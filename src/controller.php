@@ -8,7 +8,9 @@ use ReflectionParameter;
 use Tightenco\Overload\Overloadable;
 
 class controller{
-    use Overloadable;
+    use Overloadable{
+		overload as trylessOverload;
+	}
 
     public $chem;
     public $bond;
@@ -23,6 +25,14 @@ class controller{
         $this->chem = $chem;
         if($invokeAction) $this->response = $this->invokeAction();
         return $this->response;
+    }
+    
+    public function overload($args, $signatures){
+        try {
+            $this->trylessOverload($args, $signatures);
+        } catch (\Exception $e) {
+            return new Result($e, 404);
+        }
     }
 
     public function getResponse(){
