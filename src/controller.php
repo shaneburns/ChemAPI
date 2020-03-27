@@ -47,7 +47,7 @@ class controller{
         // Check if the action exists
         if($this->hasAction($this->chem->catalyst->getAction())){
             try {// invoke the action
-                if($this->chem->catalyst->hasParameters()) return $this->{$this->chem->catalyst->getAction()}(...array_values($this->chem->catalyst->parametersNeedMapping() ? $this->mapOverloadableParameters() : $this->chem->catalyst->getParameters()));
+                if($this->chem->catalyst->hasParameters()) return $this->{$this->chem->catalyst->getAction()}(...array_values($this->mapOverloadableParameters()));
                 else return $this->{$this->chem->catalyst->getAction()}();
             } catch (\Exception $e) {
                 // TODO: Log this error stat dude...
@@ -67,6 +67,7 @@ class controller{
         $params = $this->chem->catalyst->getParameters();
         $paramCount = count($params);
         $actionCandidates = $this->{$this->chem->catalyst->getAction().'Actions'};
+        $skippedCount = 0;
         $valid = false;
         foreach( $actionCandidates as $key => $val){
             if(gettype($val) == 'object') $func = new ReflectionFunction($val);
@@ -76,7 +77,12 @@ class controller{
                 $this->mapParameters($params, $fParams, $valid);
                 if($valid) break;
                 else $params = $origParams;
-            }
+            }else if($paramCount < $func->getNumberOfParameters()) $skippedCount++;
+        }
+        if(!$valid && $skippedCount == 0) {
+            $result = new Result([], 404);
+            $result->display();
+            die();
         }
         return $params;
     }
@@ -98,7 +104,7 @@ class controller{
                         break;
                     }
                 }
-            }else if(gettype($params[$i]) != $fParams[$i]->getType()){ // check basic type matching
+            }else if(gettype($params[$i]) != $fParams[$i]->getType() && $fParams[$i]->getType() != null){ // check basic type matching
                 $valid = false;
                 break; // check basic class types
             }

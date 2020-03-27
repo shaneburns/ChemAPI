@@ -61,11 +61,10 @@ class Result
         header($http[$num]);
         \http_response_code($num);
 
-        return
-            array(
-                'code' => $num,
-                'message' => $http[$num],
-            );
+        return (object) array(
+            'code' => $num,
+            'message' => $http[$num],
+        );
     }
 
     public function display()
