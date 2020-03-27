@@ -70,7 +70,7 @@ class Result
 
     public function display()
     {
-        $status = $this->HTTPStatus($result->status > 99 ? $this->status : 200);
+        $status = $this->HTTPStatus($this->status > 99 ? $this->status : 200);
         if(!empty($this->headers)) foreach($this->headers as $h ) header($h);
         if($this->status > 399 && empty($this->body))  $this->body = ['request'=> 'failed', 'message'=> $status->message];
         echo \json_encode($this->body);
