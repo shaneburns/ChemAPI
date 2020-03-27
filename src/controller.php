@@ -29,7 +29,7 @@ class controller{
     
     public function overload($args, $signatures){
         try {
-            $this->trylessOverload($args, $signatures);
+            return $this->trylessOverload($args, $signatures);
         } catch (\Exception $e) {
             return new Result($e, 404);
         }
