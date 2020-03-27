@@ -123,7 +123,7 @@ class chemistry
         $this->overload($args, [
             function (Result $result)
             {
-                $resut->display();
+                $result->display();
             },
             function (){
                 return $this->printResult(new Result(['request'=> 'failed', 'message'=> 'Try again'], 400));
