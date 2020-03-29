@@ -59,9 +59,8 @@ class chemistry
     private function sslRedirect()
     {
         // Permanently redirect
-        $location = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        header('HTTP/1.1 301 Moved Permanently');
-        header('Location: ' . $location);
+        $result = new Result(null, 301, ['Location: https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']]);
+        $result->display();
         exit;
     }
     
@@ -105,16 +104,24 @@ class chemistry
 
     public function instantiateController(bool $invokeAction = false){
         // form the class path
+        $controllerName = $this->catalyst->getController();
         $path = $this->catalyst->getControllerPath();
         if (strpos($path, 'favicon') !== false || is_null($path)) return false;
-        try{// pull the trigger
-            // Instantiate the class and 
-            $this->controller = new $path($this, $invokeAction);
-        }catch(\Exception $e){// that's a dud
-            echo $e;
-            // log path and error and everything
-            // 404 response
+        if(class_exists($path)){
+            try{// pull the trigger
+                // Instantiate the class and 
+                $this->controller = new $path($this, $invokeAction);
+            }catch(\Exception $e){// that's a dud
+                echo $e;
+                // log path and error and everything
+                // 404 response
+                $this->printResult(new Result(null, 404));
+            }
+        }else if(!preg_match("/^[A-Z]/", $this->catalyst->getController())){
+            $this->catalyst->setController(ucfirst($this->catalyst->getController()));
+            $this->instantiateController(true);
         }
+            
     }
     
     public function printResult(...$args)
