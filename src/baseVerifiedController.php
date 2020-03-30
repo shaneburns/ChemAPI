@@ -4,7 +4,7 @@ use ChemAPI\controller;
 /**
  *
  */
-class verifiedController extends controller
+class baseVerifiedController extends controller
 {
     function __construct($chem = null)
     {
@@ -23,16 +23,6 @@ class verifiedController extends controller
         // Figure it out
         else $this->response = new Result([], 401);
 
-    }
-    public function buildHeaderValuePairings($selector, $val, $encode = false){
-        $goods = $selector . ":" . $val;
-        if($encode) $goods = \base64_encode($goods);
-        return $goods;
-    }
-    public function seperateValuePairings($valPairing, $decode = false){
-        if($decode) $valPairing = \base64_decode($valPairing);
-        $goods = preg_split("#:#", $valPairing, 2, PREG_SPLIT_NO_EMPTY);
-        return $goods;
     }
 
 }

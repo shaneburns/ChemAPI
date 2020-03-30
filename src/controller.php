@@ -111,7 +111,16 @@ class controller{
             $valid = true;
         }
     }
-
+    public function buildHeaderValuePairings($selector, $val, $encode = false){
+        $goods = $selector . ":" . $val;
+        if($encode) $goods = \base64_encode($goods);
+        return $goods;
+    }
+    public function seperateValuePairings($valPairing, $decode = false){
+        if($decode) $valPairing = \base64_decode($valPairing);
+        $goods = preg_split("#:#", $valPairing, 2, PREG_SPLIT_NO_EMPTY);
+        return $goods;
+    }
     public function redirectToAction($actionName = '') : void
     {
         if(!empty($actionName)){
