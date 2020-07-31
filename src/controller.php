@@ -57,7 +57,7 @@ class controller{
         else {
             // 404 response
             // TODO: CREATE A FREAKING 404 RESPONSE BROOO
-            return new Result("The page specified was not found.", 404, []);
+            return new Result([ "status" => "failed", "message" => "The page specified was not found."], 404, []);
         }
     }
 
@@ -89,7 +89,10 @@ class controller{
 
     public function mapParameters(&$params, &$fParams, &$valid){
         for($i = 0;  $i <= count($params) - 1; $i++){// loop through those params
-            if(gettype($params[$i]) == 'object' && gettype($fParams[$i]->getClass()) == gettype($params[$i])){// check types for objects
+            $pType = gettype($params[$i]);
+            $fpType = $fParams[$i]->getType()->__toString();
+            $fpType = ($fpType == 'bool' ? 'boolean' : ($fpType == 'float' ? 'double' : ($fpType == 'int' ? 'integer' : $fpType)));
+            if($pType == 'object' && $fParams[$i]->getClass() !== null && gettype($fParams[$i]->getClass()) == $pType){// check types for objects
                 if(!$fParams[$i]->getClass()->isInternal()){// see if it's not an internal class
                     $instance = $fParams[$i]->getClass()->newInstance(); // create a new instance
                     if(!utils::compareObjectProperties($params[$i], $instance)){ // do a full compare
@@ -104,7 +107,7 @@ class controller{
                         break;
                     }
                 }
-            }else if(gettype($params[$i]) != $fParams[$i]->getType() && $fParams[$i]->getType() != null){ // check basic type matching
+            }else if($pType != $fpType && $fpType != null){ // check basic type matching
                 $valid = false;
                 break; // check basic class types
             }

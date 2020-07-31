@@ -79,9 +79,9 @@ class routingCatalyst{
                 # code...
                 break;
         }
-        if(is_array($params) || is_null($params)){
+        if(is_array($params) && !empty($params)){
             foreach ($params as $key => $value) {
-                if(gettype($value) == 'string' || startsWith($value, '{"')) {
+                if(gettype($value) == 'string' && utils::startsWith($value, '{"')) {
                     $temp = json_decode($value);
                     if(json_last_error() == JSON_ERROR_NONE) $params[$key] = $temp;
                 }
@@ -94,7 +94,7 @@ class routingCatalyst{
         $result = false;
         foreach($this->parameters as $p) if(gettype($p) == 'object')  $result = true;
         return $result;
-     }
+    }
     function getParameters(){
         return (is_array($this->parameters) ? $this->parameters : []);
     }

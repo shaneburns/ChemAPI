@@ -57,4 +57,9 @@ class utils {
         foreach($suspect as $prop => $val) if(!property_exists($expected, $prop)) return false;
         return true;
     }
+    public static function startsWith ($string, $startString) 
+    { 
+        $len = strlen($startString); 
+        return (substr($string, 0, $len) === $startString); 
+    } 
 }
